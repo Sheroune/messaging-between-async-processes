@@ -11,7 +11,7 @@ int main() {
 	
 	int mq_id = msgget(ipckey, IPC_CREAT | 0600);
     if (mq_id == -1) {
-        printf("Cannot open message queue");
+        printf("Cannot open message query");
         return -1;
     }
 	
@@ -21,6 +21,25 @@ int main() {
 	} message;
 	
 	
+	// 1st message
+	FILE *dirs = popen("tree -ad | head --lines=-2 | sed '1d'", "r");
+    fread(buf, 1, sizeof(buf), dirs);
+    pclose(dirs);
+	
+	printf("%s\n", &buf);
+	
+    message.type = 1;
+    strcpy(&message.text, buf);
+    msgsnd(mq_id, &message, strlen(message.text), 0);
+    
+	memset(buf, 0, 1024);
+	
+	
+	
+	
+	
+	
+	// 3rd message
 	FILE *hostname = popen("hostname", "r");
     fread(buf, 1, sizeof(buf), hostname);
     pclose(hostname);
