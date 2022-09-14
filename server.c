@@ -26,7 +26,7 @@ int main() {
     fread(buf, 1, sizeof(buf), dirs);
     pclose(dirs);
 	
-	printf("%s\n", &buf);
+	// printf("%s\n", &buf);
 	
     message.type = 1;
     strcpy(&message.text, buf);
@@ -35,19 +35,30 @@ int main() {
 	memset(buf, 0, 1024);
 	
 	
+	// 2nd message
+	FILE *files = popen("expr $(ls -laR | grep \"^-\" | wc -l) - $(ls -la | grep \"^-\" | wc -l)", "r");
+    fread(buf, 1, sizeof(buf), files);
+    pclose(files);
 	
+	// printf("%s\n", &buf);
 	
+    message.type = 2;
+    strcpy(&message.text, buf);
+    msgsnd(mq_id, &message, strlen(message.text), 0);
+    
+	memset(buf, 0, 1024);
 	
 	
 	// 3rd message
 	FILE *hostname = popen("hostname", "r");
     fread(buf, 1, sizeof(buf), hostname);
     pclose(hostname);
+	
+	// printf("%s\n", &buf);
     
 	message.type = 3;
     strcpy(&message.text, buf);
     msgsnd(mq_id, &message, strlen(message.text), 0);
-	
 	
 	return 0;
 }
