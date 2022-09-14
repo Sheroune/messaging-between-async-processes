@@ -31,13 +31,33 @@ int main() {
     } message;
 	
 
-	int st = msgrcv(mq_id, &message, sizeof(message.text), 2, 0);
+	int st = msgrcv(mq_id, &message, sizeof(message.text), 1, 0);
 	
-	char *command;
-	
+	printf("Message type: %ld\n", message.type);
 	printf("Message content:\n%s", &message.text);
 	
-
+	char *command;
+    int s = asprintf(&command, "ls */ -lR | grep \"^-\" | tr -s \" \" \"\t\" | cut -f 3,9");
+    if (s < 0) {
+        printf("Can't print");
+    }
+	
+	printf("\nOwner:\tFile:\n");
+	
+	int code;
+    if (fork() == 0)       // execute action in parallel process
+    {
+        execl("/bin/sh", "sh", "-c", command, (char *) 0);
+    } else {
+        // wait until child process die
+        wait(&code);
+    }
+	
+	
+	// "ls */ -lR | grep "^-" | tr -s " " "\t" | cut -f 3,9"
+	
+	// with directories
+	// "ls */ -lR | grep "^-\|:$" | tr -s " " "\t""
 	
 	return 0;
 }

@@ -60,6 +60,10 @@ int main() {
     strcpy(&message.text, buf);
     msgsnd(mq_id, &message, strlen(message.text), 0);
 	
+	// ???
+	//printf("Deleting messages query\n");
+    //msgctl(mq_id, IPC_RMID, NULL);
+	
 	return 0;
 }
 
