@@ -4,7 +4,7 @@
 #define PROJECT_ID 8841
 
 int main() {
-	char buf[1024];
+	char buf[8192];
 	
 	system("touch /tmp/lab5");
 	key_t ipckey = ftok("/tmp/lab5", PROJECT_ID);
@@ -32,7 +32,7 @@ int main() {
     strcpy(&message.text, buf);
     msgsnd(mq_id, &message, strlen(message.text), 0);
     
-	memset(buf, 0, 1024);
+	memset(buf, 0, 8192);
 	
 	
 	// 2nd message
@@ -46,7 +46,7 @@ int main() {
     strcpy(&message.text, buf);
     msgsnd(mq_id, &message, strlen(message.text), 0);
     
-	memset(buf, 0, 1024);
+	memset(buf, 0, 8192);
 	
 	
 	// 3rd message
