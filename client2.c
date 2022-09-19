@@ -11,7 +11,7 @@ int main() {
       ipckey = ftok("/tmp/lab5", PROJECT_ID);
 
 		if(ipckey == -1) {
-         printf("No messages\n");
+         printf("Error: no messages\n");
          sleep(1);
       }
 		else {
@@ -22,7 +22,7 @@ int main() {
 	//get message query id
    int mq_id = msgget(ipckey, 0);
    if(mq_id == -1) {
-      printf("Cannot open message query\n");
+      printf("Error: cannot open message query\n");
       exit(1);
    }
 
@@ -31,6 +31,7 @@ int main() {
       char text[8192];
    } message;
 
+	printf("[INFO] Reading message...\n\n");
 	int st = msgrcv(mq_id, &message, sizeof(message.text), 1, 0);
 
 	printf("Message type: %ld\n", message.type);
@@ -39,20 +40,32 @@ int main() {
 	char *command;
    int s = asprintf(&command, "du -b */");
    if(s < 0) {
-      printf("Cannot print");
+      printf("Error: cannot print\n");
    }
 
+
+	char buf[8192];
+	FILE *size = popen("du -b */", "r");
+   fread(buf, 1, sizeof(buf), size);
+   pclose(size);
+
+	message.type = 4;
+   strcpy(&message.text, buf);
+	printf("\n[INFO] Sending message\n");
+   msgsnd(mq_id, &message, strlen(message.text), 0);
+
+/*
 	printf("\nSize:\tDirectory:\n");
 
 	int code;
    // parallel process
    if(fork() == 0) {
-        execl("/bin/sh", "sh", "-c", command, (char *) 0);
+        execl("/bin/sh", "sh", "-c", command, (char*)0);
    }
    else {
       // wait until child process die
       wait(&code);
    }
-
+*/
    return 0;
 }
