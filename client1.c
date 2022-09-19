@@ -11,7 +11,7 @@ int main() {
 		ipckey = ftok("/tmp/lab5", PROJECT_ID);
 
 		if(ipckey == -1) {
-			printf("No messages\n");
+			printf("Error: no messages\n");
 			sleep(1);
 		}
 		else {
@@ -22,7 +22,7 @@ int main() {
 	//get message query id
 	int mq_id = msgget(ipckey, 0);
 	if(mq_id == -1) {
-		printf("Cannot open message query\n");
+		printf("Error: cannot open message query\n");
 		exit(1);
    }
 
@@ -31,7 +31,7 @@ int main() {
         char text[8192];
     } message;
 
-
+	printf("[INFO] Reading message...\n\n");
 	int st = msgrcv(mq_id, &message, sizeof(message.text), 2, 0);
 
 	printf("Message type: %ld\n", message.type);
@@ -40,9 +40,10 @@ int main() {
 	char *command;
 	int s = asprintf(&command, "ls */ -lR | grep \"^-\" | tr -s \" \" \"\t\" | cut -f 3,9");
    if(s < 0) {
-		printf("Can't print");
+		printf("Error: cannot print\n");
 	}
 
+	printf("\n[INFO] Printing names of the owners of the received files\n");
 	printf("\nOwner:\tFile:\n");
 
 	int code;
