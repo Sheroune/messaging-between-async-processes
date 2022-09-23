@@ -2,24 +2,19 @@
 #include <sys/msg.h>
 
 #define PROJECT_ID 8841
+#define MAX_SIZE 4096
 
 int main() {
+	char buf[MAX_SIZE];
 
-	key_t ipckey;
-
-	while(1) {
-		ipckey = ftok("/tmp/lab5", PROJECT_ID);
-
-		if(ipckey == -1) {
-			printf("Error: no messages\n");
-			sleep(1);
-		}
-		else {
-			break;
-		}
+	// get ipc key
+	key_t ipckey = ftok("/tmp/lab5", PROJECT_ID);
+	if(ipckey == -1) {
+		printf("Error: no messages\n");
+		return -1;
 	}
 
-	//get message query id
+	// get message query id
 	int mq_id = msgget(ipckey, 0);
 	if(mq_id == -1) {
 		printf("Error: cannot open message query\n");
@@ -28,7 +23,7 @@ int main() {
 
 	struct {
         long type;
-        char text[8192];
+        char text[MAX_SIZE];
     } message;
 
 	printf("[INFO] Reading message...\n\n");
@@ -37,29 +32,19 @@ int main() {
 	printf("Message type: %ld\n", message.type);
 	printf("Message content: %s", &message.text);
 
-	char *command;
-	int s = asprintf(&command, "ls */ -lR | grep \"^-\" | tr -s \" \" \"\t\" | cut -f 3,9");
-   if(s < 0) {
-		printf("Error: cannot print\n");
-	}
+	// commands which can be used to find owners
+	// "ls */ -lR | grep "^-" | tr -s " " "\t" | cut -f 3,9"
+	// with directories
+	// "ls */ -lR | grep "^-\|:$" | tr -s " " "\t""
+	// find */ -type f -printf "%u\t%p\n"
+
+	FILE *owners = popen("find */ -type f -printf \"%u\t%p\n\"", "r");
+	fread(buf, 1, sizeof(buf), owners);
+	pclose(owners);
 
 	printf("\n[INFO] Printing names of the owners of the received files\n");
 	printf("\nOwner:\tFile:\n");
-
-	int code;
-	if(fork() == 0) {
-   	execl("/bin/sh", "sh", "-c", command, (char *) 0);
-   }
-	else {
-   	// wait until child process die
-		wait(&code);
-   }
-
-
-	// "ls */ -lR | grep "^-" | tr -s " " "\t" | cut -f 3,9"
-
-	// with directories
-	// "ls */ -lR | grep "^-\|:$" | tr -s " " "\t""
+	printf("%s", &buf);
 
 	return 0;
 }

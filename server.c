@@ -2,9 +2,10 @@
 #include <sys/msg.h>
 
 #define PROJECT_ID 8841
+#define MAX_SIZE 4096
 
 int main() {
-	char buf[8192];
+	char buf[MAX_SIZE];
 
 	system("touch /tmp/lab5");
 	key_t ipckey = ftok("/tmp/lab5", PROJECT_ID);
@@ -18,7 +19,7 @@ int main() {
 
 	struct {
 		long type;
-		char text[8192];
+		char text[MAX_SIZE];
 	} message;
 
 
@@ -32,7 +33,7 @@ int main() {
    strcpy(&message.text, buf);
    msgsnd(mq_id, &message, strlen(message.text), 0);
 
-	memset(buf, 0, 8192);
+	memset(buf, 0, MAX_SIZE);
 
 
 	// 2nd message
@@ -45,7 +46,7 @@ int main() {
    strcpy(&message.text, buf);
    msgsnd(mq_id, &message, strlen(message.text), 0);
 
-	memset(buf, 0, 8192);
+	memset(buf, 0, MAX_SIZE);
 
 
 	// 3rd message
@@ -58,16 +59,18 @@ int main() {
    strcpy(&message.text, buf);
    msgsnd(mq_id, &message, strlen(message.text), 0);
 
-	memset(&message.text, 0, 8192);
+	memset(&message.text, 0, MAX_SIZE);
 
-	printf("[INFO] Waiting for messages from the clients\n");
+	// get message from 2nd client
+	printf("[INFO] Waiting for message from the 2nd client\n");
 	int st = msgrcv(mq_id, &message, sizeof(message.text), 4, 0);
 	printf("[INFO] Message received\n\n");
 
+	// print message type and content
 	printf("Message type: %ld\n", message.type);
 	printf("Message content:\n%s\n", &message.text);
 
-	// ???
+	// delete message query
 	printf("[INFO] Deleting message query\n");
    msgctl(mq_id, IPC_RMID, NULL);
 
