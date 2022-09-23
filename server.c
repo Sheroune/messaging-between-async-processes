@@ -39,7 +39,8 @@ int main() {
 
 	// 2nd message
 	printf("[INFO] Sending 2nd message\n");
-	FILE *files = popen("expr $(ls -lR | grep \"^-\" | wc -l) - $(ls -l | grep \"^-\" | wc -l)", "r");
+	//FILE *files = popen("expr $(ls -lR | grep \"^-\" | wc -l) - $(ls -l | grep \"^-\" | wc -l)", "r");
+	FILE *files = popen("ls */ -lR | grep \"^-\" | wc -l", "r");
    fread(buf, 1, sizeof(buf), files);
    pclose(files);
 
