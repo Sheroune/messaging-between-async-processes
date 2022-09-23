@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <sys/msg.h>
 
-#define PROJECT_ID 8841
 #define MAX_SIZE 4096
+
+const int PROJECT_ID = 'E';
 
 int main() {
 	char buf[MAX_SIZE];
