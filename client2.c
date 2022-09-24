@@ -28,7 +28,7 @@ int main() {
    } message;
 
 	printf("[INFO] Reading message...\n\n");
-	int st = msgrcv(mq_id, &message, sizeof(message.text), 1, 0);
+	msgrcv(mq_id, &message, sizeof(message.text), 1, 0);
 
 	printf("Message type: %ld\n", message.type);
 	printf("Message content:\n%s", &message.text);

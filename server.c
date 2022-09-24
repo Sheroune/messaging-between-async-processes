@@ -65,7 +65,7 @@ int main() {
 
 	// get message from 2nd client
 	printf("[INFO] Waiting for message from the 2nd client\n");
-	int st = msgrcv(mq_id, &message, sizeof(message.text), 4, 0);
+	msgrcv(mq_id, &message, sizeof(message.text), 4, 0);
 	printf("[INFO] Message received\n\n");
 
 	// print message type and content
