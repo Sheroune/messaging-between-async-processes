@@ -12,7 +12,7 @@ int main() {
 	key_t ipckey = ftok("/tmp/lab5", PROJECT_ID);
 
 	printf("[INFO] Creating message query\n");
-	int mq_id = msgget(ipckey, IPC_CREAT | 0666);
+	int mq_id = msgget(ipckey, IPC_CREAT | 0600);
 	if (mq_id == -1) {
 		printf("Error: cannot open message query");
 		return -1;
