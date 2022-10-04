@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/msg.h>
 
-#define MAX_SIZE 4096
+#define MAX_SIZE 8192
 
 const int PROJECT_ID = 'E';
 
