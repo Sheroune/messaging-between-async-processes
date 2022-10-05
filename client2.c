@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/msg.h>
 
-#define MAX_SIZE 8192
+#define MAX_SIZE 16384
 
 const int PROJECT_ID = 'E';
 
@@ -34,7 +34,7 @@ int main() {
 	printf("Message content:\n%s", &message.text);
 
 	// send message to the server
-	FILE *size = popen("du -b */", "r");
+	FILE *size = popen("du -b | head -n -1", "r");
    fread(buf, 1, sizeof(buf), size);
    pclose(size);
 

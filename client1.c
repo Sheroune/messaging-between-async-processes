@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/msg.h>
 
-#define MAX_SIZE 8192
+#define MAX_SIZE 16384
 
 const int PROJECT_ID = 'E';
 
@@ -37,14 +37,14 @@ int main() {
 	// "ls */ -lR | grep "^-" | tr -s " " "\t" | cut -f 3,9"
 	// with directories
 	// "ls */ -lR | grep "^-\|:$" | tr -s " " "\t""
-	// find */ -type f -printf "%u\t%p\n"
+	// find */ -type f -printf \"%u\t%p\n\"
 
-	FILE *owners = popen("find */ -type f -printf \"%u\t%p\n\"", "r");
+	FILE *owners = popen("tree -uafi | egrep '/[A-Za-z0-9.]*/'", "r");
 	fread(buf, 1, sizeof(buf), owners);
 	pclose(owners);
 
 	printf("\n[INFO] Printing names of the owners of the received files\n");
-	printf("\nOwner:\tFile:\n");
+	printf("\nOwner:\t\tFile:\n");
 	printf("%s", &buf);
 
 	return 0;

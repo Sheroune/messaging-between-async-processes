@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/msg.h>
 
-#define MAX_SIZE 8192
+#define MAX_SIZE 16384
 
 const int PROJECT_ID = 'E';
 
@@ -26,7 +26,7 @@ int main() {
 
 	// 1st message
 	printf("[INFO] Sending 1st message\n");
-	FILE *dirs = popen("tree -d | head --lines=-2 | sed '1d'", "r");
+	FILE *dirs = popen("tree -da | head --lines=-2 | sed '1d'", "r");
    fread(buf, 1, sizeof(buf), dirs);
    pclose(dirs);
 
@@ -39,8 +39,13 @@ int main() {
 
 	// 2nd message
 	printf("[INFO] Sending 2nd message\n");
+
 	//FILE *files = popen("expr $(ls -lR | grep \"^-\" | wc -l) - $(ls -l | grep \"^-\" | wc -l)", "r");
-	FILE *files = popen("ls */ -lR | grep \"^-\" | wc -l", "r");
+	//FILE *files = popen("ls */ -lR | grep \"^-\" | wc -l", "r");
+	//FILE *files = popen("tree -da | tail -n 1 | cut -f 1 -d ' '", "r");
+
+	// what have I done...
+	FILE *files = popen("expr $(tree -uafi | tail -n 1 | cut -d ' ' -f 1,3 | tr ' ' + | bc) - $(tree -uafi -L 1 | tail -n 1 | cut -d ' ' -f 1,3 | tr ' ' + | bc)", "r");
    fread(buf, 1, sizeof(buf), files);
    pclose(files);
 
